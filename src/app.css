@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+* {
+	font-family:
+		Inter Var,
+		sans-serif;
+	scrollbar-color: gray transparent;
+}
