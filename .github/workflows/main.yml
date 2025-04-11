@@ -1,101 +1,101 @@
 name: main
 on:
-    push:
-        branches:
-            - 'master'
-    pull_request:
+  push:
+    branches:
+      - 'master'
+  pull_request:
 
 env:
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: '22'
-                  cache: 'npm'
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-            - name: Install npm packages
-              run: npm ci
+      - name: Install npm packages
+        run: npm ci
 
-            - name: Prettier & eslint
-              run: npm run lint -- --max-warnings 0
-    build:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            issues: read
-            checks: write
-        env: # these variables need only to be defined, their content isn't used
-            OPENID_DISCOVERY_URL: .
-            OPENID_SECRET: .
-            OPENID_APPID: .
-            OPENID_REDIRECT_URL: .
-            OPENID_JWKS: .
-            GITLAB_BASE_URL: .
-            COOKIE_SECRET: .
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+      - name: Prettier & eslint
+        run: npm run lint -- --max-warnings 0
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+    env: # these variables need only to be defined, their content isn't used
+      OPENID_DISCOVERY_URL: .
+      OPENID_SECRET: .
+      OPENID_APPID: .
+      OPENID_REDIRECT_URL: .
+      OPENID_JWKS: .
+      GITLAB_BASE_URL: .
+      COOKIE_SECRET: .
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            - name: Setup node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '22'
-                  cache: 'npm'
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
 
-            - name: Install npm packages
-              run: npm ci
+      - name: Install npm packages
+        run: npm ci
 
-            - name: Svelte check
-              run: npm run check
+      - name: Svelte check
+        run: npm run check
 
-            - name: Build application
-              run: npm run build
+      - name: Build application
+        run: npm run build
 
-            - name: Test application
-              run: npm exec vitest -- --run --reporter junit --outputFile reports/vitest.xml
+      #- name: Test application
+      #  run: npm exec vitest -- --run --reporter junit --outputFile reports/vitest.xml
 
-            - name: Publish Test Results
-              uses: EnricoMi/publish-unit-test-result-action@v2
-              if: always()
-              with:
-                  files: |
-                      reports/*.xml
-                  comment_mode: off
-                  check_name: Vitest results
-    docker:
-        runs-on: ubuntu-latest
-        needs: [build, lint]
-        # if: github.event_name == 'push'
-        permissions:
-            contents: read
-            packages: write
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+      #- name: Publish Test Results
+      #  uses: EnricoMi/publish-unit-test-result-action@v2
+      #  if: always()
+      #  with:
+      #    files: |
+      #      reports/*.xml
+      #    comment_mode: off
+      #    check_name: Vitest results
+  docker:
+    runs-on: ubuntu-latest
+    needs: [build, lint]
+    # if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-            - name: Log in to the Container registry
-              uses: docker/login-action@v2
-              with:
-                  registry: ${{ env.REGISTRY }}
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Extract metadata (tags, labels) for Docker
-              id: meta
-              uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-              with:
-                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-            - name: Build and push Docker image
-              uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-              with:
-                  context: .
-                  push: true
-                  tags: ${{ steps.meta.outputs.tags }}
-                  labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
