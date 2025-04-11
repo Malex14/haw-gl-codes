@@ -11,7 +11,7 @@ COPY package*.json /srv/
 RUN npm ci --omit dev --no-fund --no-audit
 COPY --from=build /build/build/ /srv/
 
-FROM node:22-bookworm-slim
+FROM node:22-alpine
 WORKDIR /srv
 COPY --from=pre_run /srv /srv
 CMD ["node", "."]
