@@ -18,7 +18,12 @@
 	<div class="mx-auto mt-6 mb-2">
 		<div>
 			<a class="underline" href="/uebersicht">Wie funktioniert das Ganze hier?</a> &ndash;
-			<a class="underline" href="https://github.com/Malex14/haw-gl-codes">GitHub</a>
+			<a
+				class="underline"
+				href="https://github.com/Malex14/haw-gl-codes"
+				rel="noreferer noopener nofollower"
+				target="_blank">GitHub</a
+			>
 		</div>
 	</div>
 </div>
