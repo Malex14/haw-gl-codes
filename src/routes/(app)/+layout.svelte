@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>HAW Gitlab Kurzlinks</title>
+	<title>HAW Gitlab Beitrittscodes</title>
 </svelte:head>
 
 <div class="flex h-screen flex-col">

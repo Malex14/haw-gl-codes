@@ -43,7 +43,7 @@ export async function createAccessToken(
 	const expires_at_str = expires_at.toISOString();
 
 	const body = {
-		name: 'haw-gl-kurzlink-' + code,
+		name: 'haw-gl-beitrittscode-' + code,
 		description:
 			'Dieser Token wird für den Beitrittscode "' +
 			code +

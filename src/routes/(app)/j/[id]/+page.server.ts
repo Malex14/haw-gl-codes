@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 	const dbProject = await getDbProject(db, id);
 	if (dbProject === undefined) {
-		error(404, 'Ungültiger Link');
+		error(404, 'Ungültiger Code');
 	}
 
 	const glProject = await getGlProject(dbProject.project_id, dbProject.is_group, dbProject.token);
