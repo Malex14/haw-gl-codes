@@ -15,7 +15,7 @@ const config = {
 			directives: {
 				'default-src': ['self'],
 				'img-src': ['self', 'blob:', 'data:'],
-				'style-src': ['self'],
+				'style-src': ['self', 'unsafe-inline'],
 				'font-src': ['self'],
 				'script-src': ['strict-dynamic'],
 				'connect-src': [
